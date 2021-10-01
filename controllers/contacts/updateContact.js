@@ -1,30 +1,14 @@
-const { contactsOperations } = require('../../model')
-const { contactSchema } = require('../../schemas')
+const { NotFound } = require('http-errors')
+const { sendSuccessRes } = require('../../helpers')
+const { Contact } = require('../../models')
 
-const updateContact = async (req, res, next) => {
-  try {
-    const { error } = contactSchema.validate(req.body)
-    if (error) {
-      const err = new Error('Missing fields')
-      err.status = 400
-      throw err
-    }
-    const { contactId } = req.params
-    const result = await contactsOperations.updateContact(contactId, req.body)
-    if (!result) {
-      const error = new Error('Not found')
-      error.status = 404
-      throw error
-    }
-    res.json({
-      status: 'success',
-      code: 200,
-      data: {
-        result,
-      },
-    })
-  } catch (error) {
-    next(error)
+const updateContact = async (req, res) => {
+  const { contactId } = req.params
+  const result = await Contact.findByIdAndUpdate(contactId, req.body, { new: true })
+  if (!result) {
+    throw new NotFound(404, `Contact with id=${contactId} not found`)
   }
+  sendSuccessRes(res, { result })
 }
+
 module.exports = updateContact

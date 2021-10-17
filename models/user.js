@@ -24,10 +24,19 @@ const userSchema = Schema({
     type: String,
     default: null,
   },
+  avatarURL: {
+    type: String,
+    default: '',
+  }
+
 }, { versionKey: false, timestamps: true })
 
 userSchema.methods.setPassword = function (password) {
   this.password = bcrypt.hashSync(password, bcrypt.genSaltSync(10))
+}
+
+userSchema.methods.setAvatar = function (avatar) {
+  this.avatarURL = avatar
 }
 
 userSchema.methods.comparePassword = function (password) {
@@ -43,7 +52,8 @@ userSchema.methods.createToken = function () {
 
 const joiSchema = Joi.object({
   email: Joi.string().required(),
-  password: Joi.string().required()
+  password: Joi.string().required(),
+  avatarUrl: Joi.string()
 })
 
 const User = model('user', userSchema)

@@ -35,6 +35,10 @@ userSchema.methods.setPassword = function (password) {
   this.password = bcrypt.hashSync(password, bcrypt.genSaltSync(10))
 }
 
+userSchema.methods.setAvatar = function (avatar) {
+  this.avatarURL = avatar
+}
+
 userSchema.methods.comparePassword = function (password) {
   return bcrypt.compareSync(password, this.password)
 }
